@@ -1,6 +1,7 @@
 name: dev
 
 on:
+  push: dev
   workflow_dispatch:
     inputs:
       REF:
