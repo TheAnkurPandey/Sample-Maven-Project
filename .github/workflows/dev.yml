@@ -1,7 +1,9 @@
 name: dev
 
 on:
-  push: dev
+  push:
+    branches:
+      - dev
   workflow_dispatch:
     inputs:
       REF:
