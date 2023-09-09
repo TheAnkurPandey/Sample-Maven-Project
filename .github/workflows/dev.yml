@@ -1,0 +1,30 @@
+name: dev
+
+on:
+  workflow_dispatch:
+    inputs:
+      REF:
+        description: 'Branch, tag or commit SHA1 to build'
+        required: true
+        type: string
+
+
+jobs:
+
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout the code
+        uses: actions/checkout@v2
+        with:
+          ref: ${{ inputs.REF }}
+      - name: Set up Java
+        uses: actions/setup-java@v2
+        with:
+          java-version: '11'
+      - name: Build with Maven
+        run: mvn clean package
+      - name: echo message
+        run: |
+          echo "Build of ${{ inputs.REF }} is successful"
