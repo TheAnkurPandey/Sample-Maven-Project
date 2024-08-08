@@ -1,15 +1,13 @@
-name: dev
+name: service-dev
 
 on:
   push:
-    branches:
-      - dev
+    paths-ignore:
+      - '**.md'
+      - '.github/workflows/**.yml'
+    branches-ignore:
+      - 'master'
   workflow_dispatch:
-    inputs:
-      REF:
-        description: 'Branch, tag or commit SHA1 to build'
-        required: true
-        type: string
 
 
 jobs:
@@ -19,21 +17,28 @@ jobs:
 
     steps:
       - name: Checkout the code
-        uses: actions/checkout@v3
-        with:
-          ref: ${{ inputs.REF }}
+        uses: actions/checkout@v4
+
+      - name: Log current git branch and commit
+        run: |
+          echo "Current branch: $(git rev-parse --abbrev-ref HEAD)"
+          echo "Current commit: $(git rev-parse HEAD)"
+          echo "Current commit message: $(git log -1 --pretty=%B)"
+
       - name: Set up Java
         uses: actions/setup-java@v3
         with:
           java-version: 11
           distribution: adopt
+
       - name: Build with Maven
         run: mvn clean package
 
       - name: Run java project
         run: java -cp target/Sample-Maven-Project-1.0-SNAPSHOT.jar com.example.Main
+
       - name: echo message
         run: |
-          echo "Build of ${{ inputs.REF }} is successful"
+          echo "Build is successful"
           ls -alrtR
           echo "${{ toJson(github) }}"
