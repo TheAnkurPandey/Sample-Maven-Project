@@ -1,14 +1,20 @@
-name: dev
+name: service-master
 
 on:
+  # To allow deployment on push to master branch
   push:
+    paths-ignore:
+      - '**.md'
+      - '.github/workflows/**.yml'
     branches:
-      - dev
+      - master
+  # To allow manual deployment in production for any branch, tag or commit
   workflow_dispatch:
     inputs:
       REF:
         description: 'Branch, tag or commit SHA1 to build'
-        required: true
+        required: false
+        default: master
         type: string
 
 
@@ -19,9 +25,15 @@ jobs:
 
     steps:
       - name: Checkout the code
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
         with:
           ref: ${{ inputs.REF }}
+      - name: Log current git branch and commit
+        run: |
+          echo "Current branch: $(git rev-parse --abbrev-ref HEAD)"
+          echo "Current commit: $(git rev-parse HEAD)"
+          echo "Current commit message: $(git log -1 --pretty=%B)"
+          echo "Input REF: ${{ inputs.REF }}"
       - name: Set up Java
         uses: actions/setup-java@v3
         with:
@@ -34,6 +46,6 @@ jobs:
         run: java -cp target/Sample-Maven-Project-1.0-SNAPSHOT.jar com.example.Main
       - name: echo message
         run: |
-          echo "Build of ${{ inputs.REF }} is successful"
+          echo "Build is successful"
           ls -alrtR
           echo "${{ toJson(github) }}"
