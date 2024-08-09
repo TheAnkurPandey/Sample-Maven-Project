@@ -24,6 +24,10 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
+      - name: Log github action & current branch
+        run: |
+          echo "service-master: Current branch: $(git rev-parse --abbrev-ref HEAD)"
+
       - name: Checkout the code
         uses: actions/checkout@v4
         with:
