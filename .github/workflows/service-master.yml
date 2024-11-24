@@ -9,6 +9,8 @@ on:
     branches:
       - master
   # To allow manual deployment in production for any branch, tag or commit
+  # We can select the workflow yml file from another branch, by selecting the branch in "Use workflow from" dropdown
+  # ref is the input parameter to select the branch, tag or commit
   workflow_dispatch:
     inputs:
       ref:
@@ -27,6 +29,10 @@ jobs:
       - name: Checkout the code
         uses: actions/checkout@v4
         with:
+          # If the ref is a branch, the latest commit from the branch will be checked out
+          # If the ref is a tag, the commit for the tag will be checked out
+          # If the ref is a commit SHA1, the commit will be checked out
+          # If the ref is not provided, the default value is master
           ref: ${{ github.event.inputs.ref }}
 
       - name: Log current git branch and commit
@@ -49,6 +55,7 @@ jobs:
         run: java -cp target/Sample-Maven-Project-1.0-SNAPSHOT.jar com.example.Main
 
       - name: echo message
+        # Log the GitHub context as a JSON string
         run: |
           echo "Build is successful"
           ls -alrtR
